@@ -1,5 +1,5 @@
 
-# **Home Component **
+# **Home Component**
 
 The `Home` component is a React functional component designed to manage and display rules in a tabular format. It leverages a reusable `NewTable` component to provide filtering, sorting, bulk actions, and rule toggling capabilities. This documentation explains how the component works, its key features, and how to use or extend it.
 
