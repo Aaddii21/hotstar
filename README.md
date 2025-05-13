@@ -1,8 +1,5 @@
-Below is the documentation formatted specifically for a **GitLab README.md** file. It uses Markdown syntax to ensure proper rendering on GitLab, includes code blocks, and provides clear instructions for developers working with the `Home` component.
 
----
-
-# **Home Component Documentation**
+# **Home Component **
 
 The `Home` component is a React functional component designed to manage and display rules in a tabular format. It leverages a reusable `NewTable` component to provide filtering, sorting, bulk actions, and rule toggling capabilities. This documentation explains how the component works, its key features, and how to use or extend it.
 
@@ -202,6 +199,3 @@ Ensure that the routes (e.g., `/new-rules-management/details/:id`) are correctly
 - Add error handling for API calls to improve user experience.
 - Explore the commented-out features (e.g., accordion rows) to enhance the table's functionality.
 
----
-
-This documentation provides a clear and practical guide to understanding and working with the `Home` component. If you have any questions or need further clarification, feel free to ask!
