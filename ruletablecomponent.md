@@ -329,30 +329,6 @@ The Rules Table adapts gracefully to different screen sizes:
 
 ---
 
-## 📐 Optimal Filter Layouts
-
-### Desktop Layout
-
-| Position | Filter Type     | Width  | Suggested Filters                   |
-|----------|------------------|--------|-------------------------------------|
-| 1        | Search           | 30%    | Rule text search                    |
-| 2        | Tree Select      | 20%    | Security category hierarchy         |
-| 3        | Select (Multi)   | 15%    | Severity levels                     |
-| 4        | Tabs             | 15%    | Rule type (NIDS/HIDS)               |
-| 5        | Toggle           | 10%    | Active only                         |
-| 6        | Date Range       | 10%    | Last modified time                  |
-
-### Mobile Layout
-
-| Position | Filter Type        | Notes                                  |
-|----------|--------------------|----------------------------------------|
-| 1        | Search             | Full width                             |
-| 2        | Tabs               | Primary categorization                 |
-| 3        | Select             | Most important filter                  |
-| 4        | Collapsible Panel  | Contains secondary filters             |
-
----
-
 ## 🧠 Filter Combination Strategies
 
 ### Effective Filter Groups
