@@ -1,249 +1,93 @@
-# Rules Table Component
+# **Rules Table Component Documentation**
 
-## Overview
-The **Rules Table** is a feature-rich React component built on the `NewTable` base, designed for managing security rules in a SOC (Security Operations Center) environment. It offers filtering, sorting, bulk actions, and responsive UI with accessibility features.
+## **Overview**
 
----
+The **Security Rules Table** is an advanced React component tailored for managing and visualizing security rules within a SOC (Security Operations Center) interface. Built atop a generic `NewTable` component, it offers robust functionality including dynamic filtering, powerful sorting, bulk operations, custom rendering, and responsive design.
 
-## 🧱 Main Props (`tableConfig`)
+This component supports advanced use cases such as:
 
-| Prop             | Type     | Description                          |
-|------------------|----------|--------------------------------------|
-| `title`          | string   | Table title                          |
-| `url`            | string   | API endpoint                         |
-| `filters`        | object   | Filter configuration                 |
-| `rows`           | array    | Formatted table rows                 |
-| `actions`        | array    | Row-level action buttons             |
-| `hasCheckbox`    | boolean  | Enable row selection                 |
-| `refreshTable`   | boolean  | Triggers refresh                     |
-| `totalPages`     | number   | Pagination control                   |
-| `totalDocuments` | number   | Total item count                     |
+* Security rule auditing
+* Threat investigation
+* Rule lifecycle management
 
 ---
 
-## 🔍 Filter Configuration
+## **Component Configuration**
 
-### Two-Row Filter System
+### **Table Configuration Props**
 
-#### ✅ Row 1 Filters (Primary Filters)
-| Filter         | Type         | Features                             | Options                      |
-|----------------|--------------|--------------------------------------|------------------------------|
-| Search         | Text Input   | Full-text search with debounce       | Rule name/description        |
-| Category       | Multi-select | Dynamic options from API             | Security categories          |
-| Last Response  | Multi-select | Status indicators                    | Succeeded, Warning, Failed   |
-| Rule Type      | Tabs         | Segmented control + count indicators | All, NIDS, HIDS              |
-| Status         | Tabs         | Segmented control + status toggles   | All, Enabled, Disabled       |
-
-#### ⚙️ Row 2 Filters (Secondary Filters)
-| Filter         | Type         | Features                              |
-|----------------|--------------|---------------------------------------|
-| Date Range     | Date Picker  | Start/End date selection              |
-| Bulk Actions   | Dropdown     | Apply actions like Enable/Disable     |
-| Export         | Button       | Export current filtered data          |
+| Prop             | Type      | Description                           | Example                  |
+| ---------------- | --------- | ------------------------------------- | ------------------------ |
+| `title`          | `string`  | Title of the table                    | `"Security Rules"`       |
+| `url`            | `string`  | Backend API endpoint                  | `"/rules/get-rule-list"` |
+| `filters`        | `object`  | Structured filter configuration       | See **Filters** section  |
+| `rows`           | `array`   | Array of formatted row data           | -                        |
+| `actions`        | `array`   | Row-level actions                     | Edit, View Details       |
+| `hasCheckbox`    | `boolean` | Enable row selection for bulk actions | `true`                   |
+| `refreshTable`   | `boolean` | Controls refresh state                | -                        |
+| `totalPages`     | `number`  | Pagination pages                      | `10`                     |
+| `totalDocuments` | `number`  | Total row count                       | `100`                    |
 
 ---
 
-## 📊 Column Specifications
+## **Filter System**
 
-| Column         | Key           | Features                        | Custom Rendering              |
-|----------------|---------------|---------------------------------|-------------------------------|
-| ID             | `sid`         | Hidden                          | -                             |
-| Rule           | `message`     | Clickable link, Tags            | Name + tag count tooltip      |
-| Rule Type      | `type`        | Basic text                      | -                             |
-| Category       | `file_name`   | Basic text                      | -                             |
-| Severity       | `severity`    | Color-coded indicator           | Dot + text                    |
-| Last Response  | `lastResponse`| Status indicator                | Dot + text                    |
-| Last Update    | `lastUpdated` | Basic text                      | -                             |
-| Enabled        | `status`      | Interactive toggle switch       | ToggleSwitch component        |
+### **Two-Level Filtering Interface**
 
----
+#### **Row 1 Filters (Primary)**
 
-## 🎯 Supported Filter Types (All Possible)
+| Filter            | Type           | Description                                         |
+| ----------------- | -------------- | --------------------------------------------------- |
+| **Search**        | `text`         | Global full-text search                             |
+| **Category**      | `multi-select` | Fetched dynamically from API                        |
+| **Last Response** | `multi-select` | Status indicators: `Succeeded`, `Warning`, `Failed` |
+| **Rule Type**     | `tabs`         | Filter by `All`, `NIDS`, `HIDS`                     |
+| **Status**        | `tabs`         | Filter by `All`, `Enabled`, `Disabled`              |
 
-| Filter Type     | Use Case                            | Special Properties |
-|-----------------|-------------------------------------|--------------------|
-| Text            | Free-text search                    | `debounce`, `placeholder` |
-| Select          | Single/multi dropdown               | `options`, `multiple` |
-| Multi-select    | Multiple choice selector            | `isSearchable`, `isClearable` |
-| Date Range      | Time-based filtering                | `minDate`, `maxDate`, `showTime` |
-| Tabs            | Categorization                      | `defaultValue`, `countLabels` |
-| Toggle          | Boolean filters                     | `onLabel`, `offLabel` |
-| Tag Input       | Free-form tagging                   | `maxTags`, `delimiters` |
-| Slider          | Numeric range selectors             | `min`, `max`, `step`, `tooltip` |
-| Tree Select     | Hierarchical categories             | `treeData`, `checkable` |
-| Radio Group     | Exclusive choices                   | `vertical`, `buttonStyle` |
-| Checkbox Group  | Non-exclusive selections            | `columns`, `selectAll` |
-| Async Select    | Remote option loading               | `loadOptions`, `defaultOptions` |
+#### **Row 2 Filters (Secondary)**
+
+| Filter           | Type       | Description                       |
+| ---------------- | ---------- | --------------------------------- |
+| **Date Range**   | `date`     | From - To date selector           |
+| **Bulk Actions** | `dropdown` | `Enable`, `Disable` selected rows |
+| **Export**       | `button`   | Export current view data          |
 
 ---
 
-## 🔢 Sorting Capabilities
+## **Extended Filtering & Sorting System**
 
-| Sort Field     | Sort Direction | Default Sort | Description                  |
-|----------------|----------------|--------------|------------------------------|
-| Rule Name      | Asc / Desc     | Yes          | Alphabetical sort            |
-| Severity       | Asc / Desc     | No           | Priority-based sorting       |
-| Last Updated   | Asc / Desc     | No           | Chronological order          |
-| Status         | Asc / Desc     | No           | Enabled/Disabled grouping    |
-| Last Response  | Asc / Desc     | No           | Status severity ordering     |
+Beyond the default table filters, the system supports advanced filter types and custom sorters for extensibility which the user can add for further development:
 
-Sorting can be enabled per column via:
-```js
-sortable: true,
-sortKey: 'custom_sort_key', // optional
-```
+### **Standard Filter Types**
 
----
+| Filter Type           | Key      | Options                                     |
+| --------------------- | -------- | ------------------------------------------- |
+| Text Search           | `text`   | `placeholder`, `searchFields`, `debounceMs` |
+| Select / Multi-Select | `select` | `options`, `isMulti`, `isClearable`         |
+| Date Range            | `date`   | `minDate`, `maxDate`, `format`              |
+| Toggle                | `toggle` | `onLabel`, `offLabel`                       |
+| Slider                | `range`  | `min`, `max`, `step`, `marks`               |
 
-## 💡 Interactive Elements
+### **Security-Specific Filters**
 
-### Rule Name with Tooltip
-```jsx
-<span className="rule-name" title={fullMessage}>
-  {truncatedMessage}
-</span>
-```
+| Filter        | Key      | Details                          |
+| ------------- | -------- | -------------------------------- |
+| MITRE ATT\&CK | `mitre`  | Filter by tactics and techniques |
+| IOC Match     | `ioc`    | Match IPs, domains, hashes       |
+| Threat Level  | `threat` | Filter based on threat severity  |
+| Log Source    | `logsrc` | Source system hierarchy          |
 
-### Tags Display
-```jsx
-<span onClick={toggleTagTooltip}>
-  {RuleTableIcons.TAGS} {item.tags?.length}
-</span>
-{showTooltip && (
-  <Tooltip content={
-    item.tags.map(tag => <span key={tag}>{tag}</span>)
-  }/>
-)}
-```
+### **Sorting System**
 
-### Status Toggle
-```jsx
-<ToggleSwitch
-  enabled={item.status === "Enabled"}
-  onChange={() => toggleRuleStatus(item.sid)}
-/>
-```
+| Sort Type    | Description                | Notes                          |
+| ------------ | -------------------------- | ------------------------------ |
+| Column Sort  | Sort by table columns      | `sortable: true`               |
+| Multi-Sort   | Combine up to 3 fields     | `maxSortFields: 3`             |
+| Custom Logic | External sorting functions | Via `sortFn: (a, b) => number` |
 
----
+#### **Example Custom Sorter**
 
-## 📦 Bulk Operations
-
-### Supported Actions
-- **Enable Selected**
-- **Disable Selected**
-
-### Implementation
-```jsx
-handleBulkAction({
-  action: "Enable", // or "Disable"
-  selectedRows: [1001, 1002, 1003],
-  refreshTable: () => {
-    console.log('Table refreshed');
-  }
-});
-```
-
----
-
-## 📁 Example Data Format
-
-```js
-{
-  ID: { key: "sid", value: 123 },
-  Rule: {
-    value: <InteractiveRuleNameComponent />,
-    key: "rule"
-  },
-  "Rule Type": { value: "NIDS", key: "type" },
-  Category: { value: "Network Intrusion", key: "file_name" },
-  Severity: { value: <SeverityIndicator severity="Major" />, key: "severity" },
-  "Last Response": { value: <ResponseStatus status="Warning" />, key: "lastResponse" },
-  "Last Update": { value: "2025-04-01", key: "lastUpdated" },
-  Enabled: { value: <ToggleSwitch enabled={true} />, key: "status" }
-}
-```
-
----
-
-## 📱 Responsive Design
-
-- Truncated rule names with tooltips  
-- Mobile filter collapse into panels  
-- Adaptive column sizing  
-
----
-
-## ♿ Accessibility
-
-- Fully keyboard navigable  
-- ARIA labels applied to all interactive elements  
-- Contrast-compliant indicators  
-- Screen reader-friendly toggle switches  
-
-
-## 🧩 Advanced Filter Patterns
-
-1. **Progressive Disclosure**
-   - Show 3–5 essential filters initially
-   - Expandable section for advanced filters
-
-2. **Smart Defaults**
-   - Default to current month
-   - Only active rules by default
-   - Sorted by relevance or last update
-
-3. **Persistent State**
-   - Save filter state in URL query params
-   - Remember user preferences using localStorage
-
-4. **Visual Hierarchy**
-   - Prominent placement for primary filters
-   - Compact controls for secondary filters
-   - Collapsible sections for advanced filters
-
----
-
-## 🛠 Extensible Filtering & Sorting
-
-### Adding Custom Filters
-1. Define custom filter interface:
-```ts
-interface CustomFilter {
-  id: string;
-  render: (props: FilterProps) => ReactNode;
-  apply: (value: any, record: any) => boolean;
-  serialize?: (value: any) => any;
-}
-```
-
-2. Example: Regex pattern filter
-```js
-const regexFilter = {
-  id: 'regex',
-  render: ({ value, onChange }) => (
-    <input 
-      type="text" 
-      value={value} 
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Enter regex pattern"
-    />
-  ),
-  apply: (pattern, record) => new RegExp(pattern).test(record.message)
-};
-```
-
-### Adding Custom Sorters
-1. Define sorter interface:
-```ts
-interface CustomSorter {
-  id: string;
-  label: string;
-  compare: (a: any, b: any) => number;
-}
-```
-
-2. Example: Severity-based sorting
-```js
+```javascript
 const severitySorter = {
   id: 'severity',
   label: 'By Threat Level',
@@ -256,27 +100,196 @@ const severitySorter = {
 
 ---
 
-## 🧠 Filter Combination Strategies
+## **Column Specifications**
 
-### Effective Filter Groups
-1. **Basic Filtering**
-   - Search + Type Tabs + Status Toggle
-
-2. **Advanced Analysis**
-   - MITRE Tactics + Severity + Date Range
-
-3. **Administration View**
-   - Owner Select + Modified Date + Bulk Actions
-
-### Performance Considerations
-| Filter Type | Impact | Recommendation                         |
-|-------------|--------|----------------------------------------|
-| Search      | High   | Add debounce (300ms)                   |
-| Multi-Select| Medium | Limit to <10 options                   |
-| Tree Select | High   | Lazy load nodes                        |
-| Date Range  | Low    | -                                      |
-| Toggles     | None   | -                                      |
+| Column            | Key            | Description                     | Custom Rendering |
+| ----------------- | -------------- | ------------------------------- | ---------------- |
+| **ID**            | `sid`          | Hidden primary key              | -                |
+| **Rule**          | `message`      | Clickable + tooltip + tag count | ✅                |
+| **Rule Type**     | `type`         | Detection method                | -                |
+| **Category**      | `file_name`    | Source or classification        | -                |
+| **Severity**      | `severity`     | Color-coded                     | Dot indicator    |
+| **Last Response** | `lastResponse` | Status feedback                 | Dot indicator    |
+| **Last Update**   | `lastUpdated`  | Last modified timestamp         | -                |
+| **Enabled**       | `status`       | Interactive toggle              | `ToggleSwitch`   |
 
 ---
 
-This documentation provides a complete guide for developers to configure and extend the Rules Table with all possible filters, sorting options, and customization capabilities while ensuring usability and performance.
+## **Interactive UI Elements**
+
+### **Rule Name Link**
+
+* Navigates to detailed view
+* Displays tags count with tooltip
+
+```jsx
+<span onClick={toggleTagTooltip}>
+  {RuleTableIcons.TAGS} {item.tags?.length}
+</span>
+{showTooltip && (
+  <Tooltip content={
+    item.tags.map(tag => <span key={tag}>{tag}</span>)
+  }/>
+)}
+```
+
+### **Status Toggle**
+
+```jsx
+<ToggleSwitch
+  enabled={item.status === "Enabled"}
+  onChange={toggleRuleStatus}
+/>
+```
+
+---
+
+## **Bulk Operations**
+
+| Action               | Description                |
+| -------------------- | -------------------------- |
+| **Enable Selected**  | Activates multiple rules   |
+| **Disable Selected** | Deactivates selected rules |
+
+```jsx
+handleBulkAction({
+  action: "Enable", // or "Disable"
+  selectedRow: [1, 2, 3],
+  refreshTable: refreshCallback
+});
+```
+
+---
+
+## **Data Formatting & Example**
+
+```js
+{
+  ID: { key: "sid", value: 123 },
+  Rule: { key: "rule", value: <InteractiveRuleNameComponent /> },
+  "Rule Type": { key: "type", value: "NIDS" },
+  // ...
+}
+```
+
+### **Severity Display Example**
+
+```jsx
+<div className="flex items-center">
+  <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
+    severity === "Major" ? "bg-orange-400" :
+    severity === "Minor" ? "bg-yellow-400" : "bg-green-400"
+  }`} />
+  <span>{severity}</span>
+</div>
+```
+
+---
+
+## **Extensibility & Custom Filters**
+
+### **Add a Custom Filter**
+
+```typescript
+interface CustomFilter {
+  id: string;
+  render: (props: FilterProps) => ReactNode;
+  apply: (value: any, record: any) => boolean;
+}
+```
+
+```javascript
+const regexFilter = {
+  id: 'regex',
+  render: ({ value, onChange }) => (
+    <input 
+      type="text" 
+      value={value} 
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="Enter regex pattern"
+    />
+  ),
+  apply: (pattern, record) => 
+    new RegExp(pattern).test(record.message)
+};
+```
+
+---
+
+## **Responsiveness & Accessibility**
+
+### **Responsive Behavior**
+
+* Truncated rule text with tooltips
+* Mobile-friendly filter layout
+* Adaptive column widths
+
+### **Accessibility Features**
+
+* Keyboard navigable elements
+* ARIA roles on filters and buttons
+* Color contrast compliant badges
+* Screen reader support for toggles
+
+---
+
+## **Performance Optimization**
+
+| Technique                       | Benefit                               |
+| ------------------------------- | ------------------------------------- |
+| Debouncing                      | Limits text input rerenders           |
+| Memoization                     | Avoids re-rendering unchanged filters |
+| Virtualization (`react-window`) | Handles large datasets                |
+| Web Workers                     | Offloads compute-heavy sort/filter    |
+
+---
+
+## **Example Configuration Snippet**
+
+```jsx
+const tableConfig = {
+  title: "Security Rules",
+  url: "/api/rules",
+  filters: {
+    row1: [...],
+    row2: [...]
+  },
+  rows: formattedData,
+  actions: [{
+    icon: EditIcon,
+    label: "Edit",
+    onClick: (rule) => navigateToEdit(rule.id)
+  }],
+  customElements: {
+    filters: [regexFilter],
+    sorters: [severitySorter]
+  }
+};
+
+<NewTable tableConfig={tableConfig} />;
+```
+
+---
+
+## **Best Practices**
+
+* **Group filters by priority** (basic vs advanced)
+* **Preserve filter/sort state via URL or context**
+* **Show active filter indicators**
+* **Cap multi-sort fields to 3**
+* **Optimize custom logic for sort/apply**
+
+---
+
+## **Troubleshooting**
+
+| Issue                   | Solution                                 |
+| ----------------------- | ---------------------------------------- |
+| Filters not applying    | Check `apply` logic in custom filters    |
+| Missing sort arrows     | Ensure `sortable: true` in column config |
+| Laggy UI                | Apply virtualization and debounce logic  |
+| State resets on refresh | Use persistent keys or context           |
+
+---
+
+This documentation provides a comprehensive foundation for working with the Security Rules Table, giving your development and security teams the flexibility to tailor the component to varied operational, investigative, and compliance workflows.
