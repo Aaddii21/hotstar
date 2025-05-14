@@ -1,4 +1,4 @@
-# Documentation for Rules Table Component
+# Rules Table Component
 
 ## Overview
 The Rules Table is a sophisticated React component built on top of a generic `NewTable` component, customized specifically for displaying and managing security rules in a SOC environment. It provides rich functionality including filtering, sorting, bulk actions, and detailed rule visualization.
