@@ -1,201 +1,188 @@
+# **Simple Guide to Creating a Table Component**  
 
-# **Home Component**
-
-The `Home` component is a React functional component designed to manage and display rules in a tabular format. It leverages a reusable `NewTable` component to provide filtering, sorting, bulk actions, and rule toggling capabilities. This documentation explains how the component works, its key features, and how to use or extend it.
-
----
-
-## **Overview**
-The `Home` component serves as the main interface for managing rules in the system. It integrates with the `NewTable` component to display rule data in a structured table, allowing users to:
-- Search, filter, and sort rules.
-- Perform bulk actions (enable/disable) on multiple rules.
-- Toggle individual rule statuses.
-- Navigate to detailed views of individual rules.
+This guide will help you understand how to create a **custom table component** (`NewTable`) in React, even if you're just starting out.  
 
 ---
 
-## **Key Features**
-1. **Rule Management**:
-   - Enable or disable individual rules using a toggle switch.
-   - Perform bulk actions (enable/disable) on selected rules.
-
-2. **Table Configuration**:
-   - Filters: Search bar, category dropdown, last response status, tabs for rule types/statuses, date picker, and export options.
-   - Rows: Displays rule details such as name, type, category, severity, last response, and enabled/disabled status.
-   - Actions: Provides an "Edit" action for navigating to a rule's details page.
-
-3. **Bulk Update Status**:
-   - Displays the result of bulk update operations using the `RuleUpdateStatus` component.
-
-4. **Dynamic Data Handling**:
-   - Fetches data from the backend (`/get-rule-list`) and dynamically formats it for display.
-   - Supports server-side pagination and refreshes the table after updates.
+## **1. What Does This Table Component Do?**  
+This table displays a list of **security rules** with the following features:  
+✅ **Search & Filtering** – Find rules by name, category, status, etc.  
+✅ **Bulk Actions** – Enable/Disable multiple rules at once.  
+✅ **Toggle Switches** – Quickly enable/disable individual rules.  
+✅ **Export Data** – Download the table data.  
+✅ **Responsive Design** – Works on all screen sizes.  
 
 ---
 
-## **Code Structure**
+## **2. How Does the Code Work? (Step-by-Step Flow)**  
 
-### **Imports**
-The component imports several dependencies and utilities:
-- **React Hooks**: `useCallback`, `useMemo`, and `useState` are used for state management and performance optimization.
-- **Custom Components**:
-  - `NewTable`: Renders the table with filters, rows, and actions.
-  - `RuleUpdateStatus`: Displays bulk update responses.
-  - `ToggleSwitch`: Toggles rule statuses (enabled/disabled).
-  - `Tooltip`: Shows additional information (e.g., tags) on hover.
-- **Context**: `useRules` provides methods for editing and updating rules.
-- **Utilities**: Includes constants, icons, and helper functions.
+### **Step 1: Setting Up the Table**  
+The `Home` component uses `NewTable` and configures it using `tableConfig`.  
+
+### **Step 2: Defining Table Data & Filters**  
+The `formatTableData` function prepares:  
+- **Filters** (search bar, dropdowns, date picker, bulk actions).  
+- **Rows** (how each rule is displayed).  
+- **Actions** (like Edit button).  
+
+### **Step 3: Handling User Interactions**  
+- **Bulk Actions** (`handleBulkAction`) – Enable/Disable multiple rules.  
+- **Toggle Switch** (`toggleRule`) – Enable/Disable a single rule.  
+- **Edit Button** – Opens a details page for a rule.  
+
+### **Step 4: Displaying the Table**  
+Finally, the `NewTable` component is rendered with the `tableConfig`.  
 
 ---
 
-## **Component Breakdown**
+## **3. How to Customize the Table for Your Needs**  
 
-### **1. State Management**
-The component uses `useState` to manage various states:
-- **`showBulkUpdateResponse`**: Tracks the response of bulk update operations.
-- **`showTag`**: Controls the visibility of tag tooltips.
-- **`refreshTable`**: Triggers a refresh of the table data when rules are updated.
-
+### **A. Changing the Data Source**  
+- Modify the `url` in `tableConfig` to fetch your own API data.  
 ```javascript
-const [showBulkUpdateResponse, setShowBulkUpdateResponse] = useState(null);
-const [showTag, setShowTag] = useState(false);
-const [refreshTable, setRefreshTable] = useState(false);
+url: "https://your-api.com/get-data",
 ```
 
-### **2. Bulk Actions**
-The `handleBulkAction` function handles bulk actions (enable/disable):
-- Validates selected rows and action type.
-- Calls the `handleBulkRuleStatusUpdate` method from the `RulesContext` to update the status of selected rules.
-- Refreshes the table upon success or failure.
+### **B. Adding/Removing Filters**  
+The table has **two filter rows**:  
+1. **First Row** – Search, dropdowns, tabs.  
+2. **Second Row** – Date picker, bulk actions, export button.  
 
+**Example: Adding a New Dropdown Filter**  
 ```javascript
-const handleBulkAction = ({ action, refreshTable, selectedRow }) => {
-    if (!selectedRow.length || !action) return;
-    const newStatus = action.toLowerCase() === "enable" ? "Enabled" : "Disabled";
-    try {
-        handleBulkRuleStatusUpdate(
-            { status: newStatus, sids: selectedRow },
-            (data) => {
-                setShowBulkUpdateResponse(data);
-                refreshTable();
-            },
-            () => {
-                refreshTable();
-            }
-        );
-    } catch (error) {
-        refreshTable();
-    }
-};
+{
+  type: "select",
+  options: ["High", "Medium", "Low"],
+  label: "Priority",
+  name: "priority",
+}
 ```
 
-### **3. Toggle Rule Status**
-The `toggleRule` function enables or disables individual rules:
-- Accepts the rule ID and desired action (`Enabled` or `Disabled`).
-- Calls the `handleEditRules` method from the `RulesContext`.
-- Refreshes the table after the operation.
+### **C. Customizing Table Rows**  
+Each row can display:  
+- **Simple text**  
+- **Custom components** (like toggle switches, icons, tooltips)  
 
+**Example: Adding a Custom Badge**  
 ```javascript
-const toggleRule = async ({ action, refreshTable, id }) => {
-    try {
-        if (!id || !action) return;
-        await handleEditRules(
-            id,
-            { status: action },
-            () => refreshTable(),
-            () => refreshTable()
-        );
-    } catch (error) {
-        console.error("Error toggling rule status:", error);
-    }
-};
+Status: {
+  value: (
+    <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
+      Active
+    </span>
+  ),
+},
 ```
 
-### **4. Table Configuration**
-The `formatTableData` function prepares the configuration for the `NewTable` component:
-- **Filters**: Includes search, category dropdown, last response status, tabs, date picker, bulk actions, and export options.
-- **Rows**: Maps rule data into a structured format for display.
-- **Actions**: Provides an "Edit" action for navigating to a rule's details page.
+### **D. Adding Actions (Buttons)**  
+You can add buttons like **Edit, Delete, View**.  
 
+**Example: Adding a Delete Button**  
 ```javascript
-const formatTableData = useCallback((data) => {
-    return {
-        title: "Rule Table",
-        url: `${constants.RULES.BASE_ROUTE}/get-rule-list`,
-        filters: {
-            // Define filters here
-        },
-        rows: data?.data.map((item) => ({
-            ID: { key: "sid", value: item.sid, type: "hidden" },
-            Rule: {
-                key: "rule",
-                value: (
-                    <div>
-                        {/* Rule name and tags */}
-                    </div>
-                ),
-            },
-            // Other columns...
-        })),
-        actions: [
-            {
-                icon: ICON.EDIT,
-                label: "Edit",
-                onClick: (rule) => navigate(`/new-rules-management/${rule?.["Rule Type"]?.value}/${rule?.["ID"]?.value}`),
-            },
-        ],
-        totalPages: data?.pagination?.total_pages,
-        totalDocuments: data?.pagination?.total_documents,
-    };
-}, [refreshTable]);
+actions: [
+  {
+    icon: ICON.DELETE,
+    label: "Delete",
+    onClick: (rule) => deleteRule(rule.id),
+  },
+],
 ```
 
 ---
 
-## **Usage**
+## **4. Key Props & Configurations**  
 
-### **1. Integration**
-To use the `Home` component:
-- Import and include it in your application's routing structure.
-- Ensure the `RulesContext` is properly set up and provides the `handleEditRules` and `handleBulkRuleStatusUpdate` methods.
+| **Prop** | **Description** | **Example** |
+|----------|----------------|-------------|
+| `title` | Table title | `title: "User List"` |
+| `url` | API endpoint for data | `url: "/api/users"` |
+| `filters` | Search, dropdowns, etc. | (See filter examples above) |
+| `rows` | How each row is displayed | `rows: data.map(...)` |
+| `actions` | Buttons for each row | `actions: [{ icon: ICON.EDIT, ... }]` |
+| `hasCheckbox` | Enable row selection | `hasCheckbox: true` |
 
+---
+
+## **5. Full Example: Creating a Simple Table**  
+
+### **A. Basic Table Setup**  
 ```javascript
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./Home";
+import NewTable from "./components/NewTable";
 
-const App = () => {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/rules" element={<Home />} />
-            </Routes>
-        </Router>
-    );
+const MyTable = () => {
+  const tableConfig = {
+    title: "User List",
+    url: "/api/users",
+    rows: [
+      {
+        Name: { value: "John Doe" },
+        Email: { value: "john@example.com" },
+      },
+      {
+        Name: { value: "Jane Smith" },
+        Email: { value: "jane@example.com" },
+      },
+    ],
+  };
+
+  return <NewTable tableConfig={tableConfig} />;
 };
 
-export default App;
+export default MyTable;
 ```
 
-### **2. Customization**
-- Modify the `formatTableData` function to add or remove filters, columns, or actions.
-- Extend the `handleBulkAction` and `toggleRule` functions to include additional logic (e.g., logging errors).
-
-### **3. Navigation**
-Ensure that the routes (e.g., `/new-rules-management/details/:id`) are correctly defined in your application.
+### **B. Adding Filters & Actions**  
+```javascript
+const tableConfig = {
+  title: "User List",
+  url: "/api/users",
+  filters: {
+    row1: {
+      data: [
+        { type: "search", placeholder: "Search users..." },
+        { type: "select", options: ["Admin", "User"], label: "Role" },
+      ],
+    },
+  },
+  actions: [
+    {
+      icon: ICON.EDIT,
+      label: "Edit",
+      onClick: (user) => editUser(user.id),
+    },
+  ],
+};
+```
 
 ---
 
-## **Dependencies**
-- **React**: Version 18 or higher.
-- **React Router**: For navigation.
-- **Custom Components**: `NewTable`, `RuleUpdateStatus`, `ToggleSwitch`, `Tooltip`.
-- **Context**: `RulesContext` must provide the necessary methods.
+## **6. Troubleshooting**  
+
+❌ **Table not loading?**  
+- Check if the `url` is correct.  
+- Ensure the API returns data in the expected format.  
+
+❌ **Filters not working?**  
+- Verify that `name` in filters matches the API query parameters.  
+
+❌ **Buttons not responding?**  
+- Make sure `onClick` is properly defined.  
 
 ---
 
-## **Tips for Developers**
-- Use `console.log` to debug the `formatTableData` function and understand how data is structured.
-- Add error handling for API calls to improve user experience.
-- Explore the commented-out features (e.g., accordion rows) to enhance the table's functionality.
+## **Conclusion**  
+This table component is **flexible and easy to customize**. You can:  
+✔ Change the data source.  
+✔ Add/remove filters.  
+✔ Modify how rows are displayed.  
+✔ Add new actions (Edit, Delete, etc.).  
 
+Start by copying the **basic example** and gradually add more features! 🚀  
+
+**Need help?**  
+👉 Try modifying the code step by step.  
+👉 Check the console for errors.  
+👉 Refer to this guide for configuration options.  
+
+Happy coding! 😊
